@@ -66,8 +66,11 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-# SRC = $(TARGET).c
-SRC = $(wildcard *.c)
+
+SRC_DIR = $(shell pwd)
+
+SRC = $(SRC_DIR)/$(wildcard *.c)
+
 OBJDIR = Builds
 # List Assembler source files here.
 #     Make them always end in a capital .S.  Files ending in a lowercase .s
