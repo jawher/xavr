@@ -3,7 +3,7 @@ X-AVR
 
 **X-AVR** is an XCode template for generating `AVR C` projects.
 
-Now the meta version: **X-AVR** is a python script which uses the installed `avr-gcc` and `avrdude` to generate and install an XCode `TemplateInfo.plist` file. This template can be used to create `AVR C` XCode projects whith a `Makefile` to build and upload the program to an `AVR` chip.
+Now the meta version: **X-AVR** is a python script which uses the installed `avr-gcc` and `avrdude` to generate and install an XCode `TemplateInfo.plist` file. This template can be used to create `AVR C` XCode projects with a `Makefile` to build and upload the program to an `AVR` chip.
 
 *Notice*: This template does not generate projects in *the arduino language*. The generated project uses the `C` language and the `avr-libc` library.
 
