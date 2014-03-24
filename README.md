@@ -57,6 +57,8 @@ The project is created with the following targets:
 * `Clean`: deletes the build artifcats
 * `Index`: a *trick* target to get XCode autocompletion to work. You're not supposed to interact with this target
 
+Also check [Using XCode for AVR C developement](http://jawher.me/2014/03/21/using-xcode-avr-c/) for more detailed instructions and screenshots.
+
 # Prequisites
 
 * `avr-gcc` must be installed and in the `PATH` variable (detectable via a `which avr-gcc`)
