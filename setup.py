@@ -71,8 +71,6 @@ def supported_programmers():
 	proc = subprocess.Popen('avrdude -c?', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	exitcode = proc.returncode
-
-	# output = subprocess.check_output('avrdude -c?', shell=True)
 	lines = string.split(err, '\n')
 
 	programmers = []
