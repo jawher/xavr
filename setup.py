@@ -46,17 +46,20 @@ def mcu_to_def(mcu):
 	return '__AVR_' + defi + '__'
 
 def supported_mcus():
-	HEADER = '  Known MCU names:'
-	output = subprocess.check_output('avr-gcc -Wa,-mlist-devices --target-help', shell=True)
-	lines = string.split(output, '\n')
+	HEADER = 'Known MCU names:'
+
+	proc = subprocess.Popen('avr-gcc -Wa,-mlist-devices --target-help', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+	exitcode = proc.returncode
+	lines = string.split(out, '\n')
 
 	mcus = []
 	consider = False
 	for line in lines:
-		if line==HEADER:
+		if HEADER in line:
 			consider = True
 		elif consider:
-			if line.startswith('    '):
+			if line.startswith(' '):
 				for mcu in line.split():
 					mcus.append({'mcu': mcu, 'defi': mcu_to_def(mcu)})
 			else:
