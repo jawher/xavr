@@ -485,14 +485,14 @@ clean_list :
 	@echo
 	@echo $(MSG_CLEANING)
 	$(REMOVE) $(OBJDIR)/$(TARGET).hex
-	$(REMOVE) $(OBJDIR)/$(OBJDIR)/$(TARGET).eep
+	$(REMOVE) $(OBJDIR)/$(TARGET).eep
 	$(REMOVE) $(OBJDIR)/$(TARGET).cof
 	$(REMOVE) $(OBJDIR)/$(TARGET).elf
 	$(REMOVE) $(OBJDIR)/$(TARGET).map
 	$(REMOVE) $(OBJDIR)/$(TARGET).sym
 	$(REMOVE) $(OBJDIR)/$(TARGET).lss
-	$(REMOVE) $(OBJDIR)/$(OBJ)
-	$(REMOVE) $(OBJDIR)/$(LST)
+	$(REMOVE) $(OBJ)
+	$(REMOVE) $(LST)
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.s)
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.d)
 	$(REMOVE) $(OBJDIR)/.dep/*
