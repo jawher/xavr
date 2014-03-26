@@ -67,9 +67,7 @@ TARGET = main
 
 # List C source files here. (C dependencies are automatically generated.)
 
-SRC_DIR = $(shell pwd)
-
-SRC = $(SRC_DIR)/$(wildcard *.c)
+SRC = $(wildcard *.c)
 
 OBJDIR = Builds
 # List Assembler source files here.
@@ -461,7 +459,7 @@ $(OBJDIR)/%.elf: $(OBJ)
 $(OBJDIR)/%.o : %.c
 	@echo
 	@echo $(MSG_COMPILING) $<
-	$(CC) -c $(ALL_CFLAGS) $< -o $@ 
+	$(CC) -c $(ALL_CFLAGS) $(abspath $<) -o $@ 
 
 
 # Compile: create assembler files from C source files.
