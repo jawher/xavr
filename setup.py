@@ -93,6 +93,9 @@ def supported_programmers():
 def avr_loc():
 	return os.path.dirname(os.path.dirname(subprocess.check_output('which avr-gcc', shell=True)))
 
+def avrdude_loc():
+	return subprocess.check_output('which avrdude', shell=True).strip()
+
 def isystem():
 	proc = subprocess.Popen('echo | avr-cpp -v', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -138,13 +141,15 @@ def main():
 			
 
 	model = {'isystem': ' '.join(isystem()), 
-			 'avr_loc': avr_loc(), 
+			 'avr_loc': avr_loc(),
+			 'avrdude_loc': avrdude_loc(),
 			 'mcus': supported_mcus(),
 			 'programmers': supported_programmers()
 			}
 	exec_template('TemplateInfo.plist.tpl', 'TemplateInfo.plist', model)
 
-	print('Generated plist file:\n\tAVR HOME    : "{}"\n\tMCUs        : {}\n\tProgrammers : {}'.format(model['avr_loc'], len(model['mcus']), len(model['programmers'])))
+	print('Generated plist file:\n\tAVR HOME    : "{}"\n\tMCUs        : {}\n\tProgrammers : {}\n\tAVRDUDE   : "{}"'
+		.format(model['avr_loc'], len(model['mcus']), len(model['programmers']), model['avrdude_loc']))
 
 
 	DEST_DIR = os.path.join(os.path.expanduser('~'), 'Library/Developer/Xcode/Templates/Project Template/xavr/xavr.xctemplate/')
