@@ -66,6 +66,14 @@ Also check [Using XCode for AVR C developement](http://jawher.me/2014/03/21/usin
 
 Simply install [AVR Crosspack](http://www.obdev.at/products/crosspack/index.html) to satisfy these prequisites.
 
+Another option is to use `homebrew`:
+
+```
+brew install avrdude
+brew tap larsimmisch/avr
+brew install avr-libc
+```
+
 # Credits
 
 ## Icon

@@ -91,7 +91,8 @@ def supported_programmers():
 	return programmers
 
 def avr_loc():
-	return os.path.dirname(os.path.dirname(subprocess.check_output('which avr-gcc', shell=True)))
+	bin_path = subprocess.check_output('which avr-gcc', shell=True).strip()
+	return os.path.dirname(os.path.dirname(os.path.realpath(bin_path)))
 
 def avrdude_loc():
 	return subprocess.check_output('which avrdude', shell=True).strip()
