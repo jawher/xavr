@@ -55,8 +55,6 @@ AVRDUDE_PROGRAMMER = ___VARIABLE_PROGRAMMER___
 # com1 = serial port. Use lpt1 to connect to parallel port.
 AVRDUDE_PORT = /dev/cu.usbmodemfd121    # programmer connected to serial device
 
-
-AVR_LOC = ___VARIABLE_AVR_LOC___
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
 
@@ -268,12 +266,12 @@ DEBUG_HOST = localhost
 
 # Define programs and commands.
 SHELL = sh
-CC = $(AVR_LOC)/bin/avr-gcc
-OBJCOPY = $(AVR_LOC)/bin/avr-objcopy
-OBJDUMP = $(AVR_LOC)/bin/avr-objdump
-SIZE = $(AVR_LOC)/bin/avr-size
-NM = $(AVR_LOC)/bin/avr-nm
-AVRDUDE = ___VARIABLE_AVRDUDE_LOC___
+CC = {avr-gcc_loc}
+OBJCOPY = {avr-objcopy_loc}
+OBJDUMP = {avr-objdump_loc}
+SIZE = {avr-size_loc}
+NM = {avr-nm_loc}
+AVRDUDE = {avrdude_loc}
 REMOVE = rm -f
 COPY = cp
 WINSHELL = cmd

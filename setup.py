@@ -123,6 +123,7 @@ def ensure_installed(tool):
 	exitcode = proc.returncode
 	if exitcode==0:
 		print('Found {t} install in "{p}"'.format(t=tool, p=out.strip()))
+		return out.strip()
 	else:
 		print(tool +' is not installed (or is not in the PATH). Exiting')
 		sys.exit(1)
@@ -135,22 +136,22 @@ def mkdirs_p(dirs):
 			pass
 		else: raise
 
-def main():	
-	tools = ['avr-gcc', 'avrdude']
+def main():
+	model = {}
+	tools = ['avr-gcc', 'avr-objcopy', 'avr-objdump', 'avr-size', 'avr-nm', 'avrdude']
 	for tool in tools:
-		ensure_installed(tool)
+		model[tool + '_loc'] = ensure_installed(tool)
 			
+	exec_template('Makefile.tpl', 'Makefile', model)
 
 	model = {'isystem': ' '.join(isystem()), 
-			 'avr_loc': avr_loc(),
-			 'avrdude_loc': avrdude_loc(),
 			 'mcus': supported_mcus(),
 			 'programmers': supported_programmers()
 			}
 	exec_template('TemplateInfo.plist.tpl', 'TemplateInfo.plist', model)
 
-	print('Generated plist file:\n\tAVR HOME    : "{}"\n\tMCUs        : {}\n\tProgrammers : {}\n\tAVRDUDE   : "{}"'
-		.format(model['avr_loc'], len(model['mcus']), len(model['programmers']), model['avrdude_loc']))
+	print('Generated template:\n\tMCUs        : {}\n\tProgrammers : {}'
+		.format(len(model['mcus']), len(model['programmers'])))
 
 
 	DEST_DIR = os.path.join(os.path.expanduser('~'), 'Library/Developer/Xcode/Templates/Project Template/xavr/xavr.xctemplate/')
@@ -161,6 +162,7 @@ def main():
 	shutil.copy('TemplateInfo.plist', DEST_DIR)
 	shutil.copy('TemplateIcon.icns', DEST_DIR)
 
+	os.remove('Makefile')
 	os.remove('TemplateInfo.plist')
 	print('Done. Hack away !\n')
 	

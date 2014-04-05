@@ -215,40 +215,6 @@
 			<key>Type</key>
 			<string>text</string>
 		</dict>
-
-		<dict>
-			<key>Default</key>
-			<string>{avr_loc}</string>
-			<key>Description</key>
-			<string>AVR GCC directory</string>
-			<key>Identifier</key>
-			<string>AVR_LOC</string>
-			<key>Name</key>
-			<string>AVR GCC directory</string>
-			<key>SortOrder</key>
-			<integer>4</integer>
-			<key>Required</key>
-        	<true/>
-			<key>Type</key>
-			<string>static</string>
-		</dict>
-
-		<dict>
-			<key>Default</key>
-			<string>{avrdude_loc}</string>
-			<key>Description</key>
-			<string>avrdude directory</string>
-			<key>Identifier</key>
-			<string>AVRDUDE_LOC</string>
-			<key>Name</key>
-			<string>avrdude directory</string>
-			<key>SortOrder</key>
-			<integer>5</integer>
-			<key>Required</key>
-        	<true/>
-			<key>Type</key>
-			<string>static</string>
-		</dict>
 	</array>
 </dict>
 </plist>
