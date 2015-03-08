@@ -198,6 +198,23 @@
 				@end@
 			</dict>
 		</dict>
+		
+		<dict>
+			<key>Default</key>
+			<string>/dev/cu.usbmodem*</string>
+			<key>Description</key>
+			<string>Serial Port (for serial programmer)</string>
+			<key>Identifier</key>
+			<string>SERIAL_PORT</string>
+			<key>Name</key>
+			<string>Serial Port</string>
+			<key>SortOrder</key>
+			<integer>3</integer>
+			<key>Required</key>
+        	<true/>
+			<key>Type</key>
+			<string>text</string>
+		</dict>
 
 		<dict>
 			<key>Default</key>
@@ -209,7 +226,7 @@
 			<key>Name</key>
 			<string>Frequency</string>
 			<key>SortOrder</key>
-			<integer>3</integer>
+			<integer>4</integer>
 			<key>Required</key>
         	<true/>
 			<key>Type</key>
