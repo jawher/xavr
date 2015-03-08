@@ -53,7 +53,7 @@ F_CPU = ___VARIABLE_F_CPU___
 AVRDUDE_PROGRAMMER = ___VARIABLE_PROGRAMMER___
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = ___VARIABLE_SERIAL_PORT___    # programmer connected to serial device
+AVRDUDE_PORT = /dev/___VARIABLE_SERIAL_PORT___    # programmer connected to serial device
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
