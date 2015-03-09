@@ -457,7 +457,7 @@ $(OBJDIR)/%.elf: $(OBJ)
 $(OBJDIR)/%.o : %.c
 	@echo
 	@echo $(MSG_COMPILING) $<
-	$(CC) -c $(ALL_CFLAGS) $(abspath $<) -o $@ 
+	$(CC) -c $(ALL_CFLAGS) "$(abspath $<)" -o $@ 
 
 
 # Compile: create assembler files from C source files.
