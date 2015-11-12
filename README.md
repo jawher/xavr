@@ -46,8 +46,6 @@ Once the template is installed, you should see an `xavr` entry in the new projec
 The wizard page lets you select the target MCU, its frequency and the programmer to be used to upload the program.
 
 After the wizard is done, hit `Cmd+B` to build the project.
-** The first build will fail. But that's *normal* ** (a first run is needed to generate the dependencies maps).
-Just rebuild a second time and it should pass.
 
 The project is created with the following targets:
 
