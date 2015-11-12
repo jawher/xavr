@@ -40,6 +40,8 @@
 			<array>
 				<string>Makefiles</string>
 			</array>
+			<key>TargetIndices</key>
+			<array/>
 		</dict>
 	</dict>
 	<key>Nodes</key>
