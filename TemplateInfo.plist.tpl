@@ -88,7 +88,7 @@
 			<key>BuildToolPath</key>
 			<string>make</string>
 			<key>BuildToolArgsString</key>
-			<string>clean build -C &quot;$(PROJECT)&quot;</string>
+			<string>build -C &quot;$(PROJECT)&quot;</string>
 		</dict>
 		<dict>
 			<key>Name</key>
@@ -98,7 +98,7 @@
 			<key>BuildToolPath</key>
 			<string>make</string>
 			<key>BuildToolArgsString</key>
-			<string>clean build program -C &quot;$(PROJECT)&quot;</string>
+			<string>program -C &quot;$(PROJECT)&quot;</string>
 		</dict>
 		<dict>
 			<key>Name</key>

@@ -306,16 +306,27 @@ LST = $(addprefix $(OBJDIR)/,$(SRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.l
 
 
 # Compiler flags to generate dependency files.
-GENDEPFLAGS = -MD -MP -MF $(OBJDIR)/.dep/$(@F).d
+GENDEPFLAGS = -M
 
 
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
-ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS) $(GENDEPFLAGS)
+ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
+# Generate dependency files
+DEPSDIR   = $(OBJDIR)/.dep
+DEPS      = $(SRC:%.c=$(DEPSDIR)/%.d)
 
+-include $(DEPS)
+
+$(DEPSDIR):
+	mkdir -p $(DEPSDIR)
+
+.DELETE_ON_ERROR:
+$(DEPSDIR)/%.d: %.c | $(DEPSDIR)
+	$(CC) $(ALL_ASFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.c,$(OBJDIR)/%.o,$<) -MF $@ $<
 
 
 # Default target.
@@ -494,11 +505,6 @@ clean_list :
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.s)
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.d)
 	$(REMOVE) $(OBJDIR)/.dep/*
-
-
-
-# Include the dependency files.
--include $(shell mkdir $(OBJDIR)/.dep 2>/dev/null) $(wildcard $(OBJDIR)/.dep/*)
 
 
 # Listing of phony targets.
