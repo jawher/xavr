@@ -50,7 +50,7 @@ def mcu_to_def(mcu):
 def supported_mcus():
     HEADER = 'Known MCU names:'
 
-    proc = subprocess.Popen('avr-gcc -Wa,-mlist-devices --target-help', stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    proc = subprocess.Popen('avr-gcc --target-help', stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             shell=True)
     out, err = proc.communicate()
     lines = string.split(out, '\n')
