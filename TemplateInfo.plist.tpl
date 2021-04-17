@@ -36,10 +36,6 @@
 		<dict>
 			<key>Path</key>
 			<string>Makefile</string>
-			<key>Group</key>
-			<array>
-				<string>Makefiles</string>
-			</array>
 			<key>TargetIndices</key>
 			<array/>
 		</dict>
@@ -203,9 +199,9 @@
 		
 		<dict>
 			<key>Default</key>
-			<string>cu.usbmodem*</string>
+			<string>ttys00*</string>
 			<key>Description</key>
-			<string>Serial Port (for serial programmer)</string>
+			<string>Serial Port (for serial programmer) -- or NONE for usb programmers</string>
 			<key>Identifier</key>
 			<string>SERIAL_PORT</string>
 			<key>Name</key>
@@ -213,27 +209,27 @@
 			<key>SortOrder</key>
 			<integer>3</integer>
 			<key>Required</key>
-        	<true/>
+      <true/>
 			<key>Type</key>
 			<string>text</string>
 		</dict>
 
-    <dict>
-      <key>Default</key>
-      <string>100000</string>
-      <key>Description</key>
-      <string>Serial port bit rate (in bps)</string>
-      <key>Identifier</key>
-      <string>PORT_SPEED</string>
-      <key>Name</key>
-      <string>Bit Rate</string>
-      <key>SortOrder</key>
-      <integer>4</integer>
-      <key>Required</key>
-          <true/>
-      <key>Type</key>
-      <string>text</string>
-    </dict>
+		<dict>
+			<key>Default</key>
+			<string>100kHz</string>
+			<key>Description</key>
+			<string>JTAG bitclock rate (in bps)</string>
+			<key>Identifier</key>
+			<string>BITCLOCK</string>
+			<key>Name</key>
+			<string>Bit Rate</string>
+			<key>SortOrder</key>
+			<integer>4</integer>
+			<key>Required</key>
+			<true/>
+			<key>Type</key>
+			<string>text</string>
+		</dict>
 
 		<dict>
 			<key>Default</key>
@@ -245,9 +241,9 @@
 			<key>Name</key>
 			<string>Frequency</string>
 			<key>SortOrder</key>
-			<integer>4</integer>
+			<integer>5</integer>
 			<key>Required</key>
-        	<true/>
+			<true/>
 			<key>Type</key>
 			<string>text</string>
 		</dict>

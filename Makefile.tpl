@@ -52,9 +52,8 @@ MCU = ___VARIABLE_MCU___
 F_CPU = ___VARIABLE_F_CPU___
 
 AVRDUDE_PROGRAMMER = ___VARIABLE_PROGRAMMER___
-AVRDUDE_SPEED = __VARIABLE_PORT_SPEED___
+AVRDUDE_BITCLOCK = ___VARIABLE_BITCLOCK___
 
-# Comment out following line if using avrispmkII
 AVRDUDE_PORT = ___VARIABLE_SERIAL_PORT___    # programmer connected to serial device
 
 # Output format. (can be srec, ihex, binary)
@@ -240,11 +239,11 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(OBJDIR)/$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
-ifneq ($(strip $(AVRDUDE_PORT)),)
+AVRDUDE_FLAGS = -p $(MCU) -c $(AVRDUDE_PROGRAMMER)
+ifneq ($(strip $(AVRDUDE_PORT)),NONE)
 AVRDUDE_FLAGS += -P /dev/$(AVRDUDE_PORT)
-AVRDUDE_FLAGS += $(AVRDUDE_SPEED)
 endif
+AVRDUDE_FLAGS += -B $(AVRDUDE_BITCLOCK)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
