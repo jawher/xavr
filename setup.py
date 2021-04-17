@@ -147,7 +147,7 @@ def mkdirs_p(dirs):
 
 def main():
     model = {}
-    tools = ['avr-gcc', 'avr-objcopy', 'avr-objdump', 'avr-size', 'avr-nm', 'avrdude']
+    tools = ['avr-gcc', 'avr-g++', 'avr-objcopy', 'avr-objdump', 'avr-size', 'avr-nm', 'avrdude']
     for tool in tools:
         model[tool + '_loc'] = ensure_installed(tool)
 

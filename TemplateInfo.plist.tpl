@@ -218,6 +218,23 @@
 			<string>text</string>
 		</dict>
 
+    <dict>
+      <key>Default</key>
+      <string>100000</string>
+      <key>Description</key>
+      <string>Serial port bit rate (in bps)</string>
+      <key>Identifier</key>
+      <string>PORT_SPEED</string>
+      <key>Name</key>
+      <string>Bit Rate</string>
+      <key>SortOrder</key>
+      <integer>4</integer>
+      <key>Required</key>
+          <true/>
+      <key>Type</key>
+      <string>text</string>
+    </dict>
+
 		<dict>
 			<key>Default</key>
 			<string>16000000</string>

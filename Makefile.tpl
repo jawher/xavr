@@ -12,6 +12,7 @@
 # Markus Pfaff
 # Sander Pool
 # Frederik Rouleau
+# Craig Altenburg
 #
 #----------------------------------------------------------------------------
 # On command line:
@@ -51,9 +52,10 @@ MCU = ___VARIABLE_MCU___
 F_CPU = ___VARIABLE_F_CPU___
 
 AVRDUDE_PROGRAMMER = ___VARIABLE_PROGRAMMER___
+AVRDUDE_SPEED = __VARIABLE_PORT_SPEED___
 
-# com1 = serial port. Use lpt1 to connect to parallel port.
-AVRDUDE_PORT = /dev/___VARIABLE_SERIAL_PORT___    # programmer connected to serial device
+# Comment out following line if using avrispmkII
+AVRDUDE_PORT = ___VARIABLE_SERIAL_PORT___    # programmer connected to serial device
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -66,6 +68,8 @@ TARGET = main
 # List C source files here. (C dependencies are automatically generated.)
 
 SRC = $(wildcard *.c)
+
+CPPSRC = $(wildcard *.cpp)
 
 OBJDIR = Builds
 # List Assembler source files here.
@@ -132,6 +136,17 @@ CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -gstabs
 CFLAGS += -gstrict-dwarf
+
+
+CPPFLAGS = -g$(DEBUG)
+CPPFLAGS += $(CDEFS) $(CINCS)
+CPPFLAGS += -O$(OPT)
+CPPFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CPPFLAGS += -Wall
+CPPFLAGS += -Wa,-adhlns=$(addprefix $(OBJDIR)/,$(<:.cpp=.lst))
+CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
+CPPFLAGS += -gstabs
+CPPFLAGS += -gstrict-dwarf
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
@@ -225,7 +240,11 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(OBJDIR)/$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -p $(MCU) $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+ifneq ($(strip $(AVRDUDE_PORT)),)
+AVRDUDE_FLAGS += -P /dev/$(AVRDUDE_PORT)
+AVRDUDE_FLAGS += $(AVRDUDE_SPEED)
+endif
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
@@ -267,6 +286,7 @@ DEBUG_HOST = localhost
 # Define programs and commands.
 SHELL = sh
 CC = {avr-gcc_loc}
+CCPP = {avr-g++_loc}
 OBJCOPY = {avr-objcopy_loc}
 OBJDUMP = {avr-objdump_loc}
 SIZE = {avr-size_loc}
@@ -299,10 +319,10 @@ MSG_CLEANING = Cleaning project:
 
 
 # Define all object files.
-OBJ = $(addprefix $(OBJDIR)/,$(SRC:.c=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
+OBJ = $(addprefix $(OBJDIR)/,$(SRC:.c=.o)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
 
 # Define all listing files.
-LST = $(addprefix $(OBJDIR)/,$(SRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
+LST = $(addprefix $(OBJDIR)/,$(SRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
 
 
 # Compiler flags to generate dependency files.
@@ -312,12 +332,13 @@ GENDEPFLAGS = -M
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
 ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS)
+ALL_CPPFLAGS = -mmcu=$(MCU) -I. $(CPPFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Generate dependency files
 DEPSDIR   = $(OBJDIR)/.dep
-DEPS      = $(SRC:%.c=$(DEPSDIR)/%.d)
+DEPS      = $(SRC:%.c=$(DEPSDIR)/%.d) $(CPPSRC:%.cpp=$(DEPSDIR)/%.d)
 
 -include $(DEPS)
 
@@ -470,10 +491,20 @@ $(OBJDIR)/%.o : %.c
 	@echo $(MSG_COMPILING) $<
 	$(CC) -c $(ALL_CFLAGS) "$(abspath $<)" -o $@ 
 
+# Compile: create object files from C++ source files.
+$(OBJDIR)/%.o : %.cpp
+	@echo
+	@echo $(MSG_COMPILING) $<
+	$(CCPP) -c $(ALL_CPPFLAGS) "$(abspath $<)" -o $@
+
 
 # Compile: create assembler files from C source files.
 $(OBJDIR)/%.s : %.c
 	$(CC) -S $(ALL_CFLAGS) $< -o $@
+
+# Compile: create assembler files from C++ source files.
+$(OBJDIR)/%.s : %.cpp
+	$(CCPP) -S $(ALL_CPPFLAGS) $< -o $@
 
 
 # Assemble: create object files from assembler source files.
@@ -484,7 +515,11 @@ $(OBJDIR)/%.o : %.S
 
 # Create preprocessed source for use in sending a bug report.
 $(OBJDIR)/%.i : %.c
-	$(CC) -E -mmcu=$(MCU) -I. $(CFLAGS) $< -o $@ 
+	$(CC) -E -mmcu=$(MCU) -I. $(CFLAGS) $< -o $@
+
+# Create preprocessed source for use in sending a bug report.
+$(OBJDIR)/%.i : %.cpp
+	$(CCPP) -E -mmcu=$(MCU) -I. $(CPPFLAGS) $< -o $@
 
 
 # Target: clean project.
@@ -502,8 +537,15 @@ clean_list :
 	$(REMOVE) $(OBJDIR)/$(TARGET).lss
 	$(REMOVE) $(OBJ)
 	$(REMOVE) $(LST)
+ifneq ($(strip $(SRC)),)
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.s)
 	$(REMOVE) $(OBJDIR)/$(SRC:.c=.d)
+endif
+ifneq ($(strip $(CPPSRC)),)
+	$(REMOVE) $(OBJDIR)/$(CPPSRC:.cpp=.s)
+	$(REMOVE) $(OBJDIR)/$(CPPSRC:.cpp=.d)
+endif
+
 	$(REMOVE) $(OBJDIR)/.dep/*
 
 
