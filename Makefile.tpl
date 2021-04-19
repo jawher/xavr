@@ -146,6 +146,7 @@ CPPFLAGS += -Wa,-adhlns=$(addprefix $(OBJDIR)/,$(<:.cpp=.lst))
 CPPFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CPPFLAGS += -gstabs
 CPPFLAGS += -gstrict-dwarf
+CPPFLAGS += -fno-threadsafe-statics
 
 #---------------- Assembler Options ----------------
 #  -Wa,...:   tell GCC to pass this to the assembler.
