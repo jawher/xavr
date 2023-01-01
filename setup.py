@@ -53,12 +53,12 @@ def supported_mcus():
     proc = subprocess.Popen('avr-gcc --target-help', stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             shell=True)
     out, err = proc.communicate()
-    lines = string.split(out, '\n')
+    lines = out.decode('utf-8').split('\n')
 
     mcus = []
     consider = False
     for line in lines:
-        print line
+        print(line)
         if HEADER in line:
             consider = True
         elif consider:
@@ -77,7 +77,7 @@ def supported_programmers():
 
     proc = subprocess.Popen('avrdude -c?', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
-    lines = string.split(err, '\n')
+    lines = err.decode('utf-8').split('\n')
 
     programmers = []
     consider = False
@@ -107,7 +107,7 @@ def isystem():
     proc = subprocess.Popen('echo | avr-cpp -v', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
 
-    lines = string.split(err, '\n')
+    lines = err.decode('utf-8').split('\n')
     isys = []
 
     consider = False
