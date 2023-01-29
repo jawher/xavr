@@ -3,14 +3,17 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-void initIO(void) {
-	
+void initIO( void )
+{
+
 }
 
-int main(void) {
+int main( void )
+{
 	initIO();
 
-	while (1) {
+	while (1)
+	{
 	}
 	return 0; // never reached
 }

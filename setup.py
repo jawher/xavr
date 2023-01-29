@@ -53,12 +53,12 @@ def supported_mcus():
     proc = subprocess.Popen('avr-gcc --target-help', stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             shell=True)
     out, err = proc.communicate()
-    lines = string.split(out, '\n')
+    lines = out.decode('utf-8').split('\n')
 
     mcus = []
     consider = False
     for line in lines:
-        print line
+        print(line)
         if HEADER in line:
             consider = True
         elif consider:
@@ -77,7 +77,7 @@ def supported_programmers():
 
     proc = subprocess.Popen('avrdude -c?', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
-    lines = string.split(err, '\n')
+    lines = err.decode('utf-8').split('\n')
 
     programmers = []
     consider = False
@@ -107,7 +107,7 @@ def isystem():
     proc = subprocess.Popen('echo | avr-cpp -v', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
 
-    lines = string.split(err, '\n')
+    lines = err.decode('utf-8').split('\n')
     isys = []
 
     consider = False
@@ -126,10 +126,11 @@ def isystem():
 def ensure_installed(tool):
     proc = subprocess.Popen('which ' + tool, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
+    out = out.decode('utf-8').strip()
     exitcode = proc.returncode
     if exitcode == 0:
-        print('Found {t} install in "{p}"'.format(t=tool, p=out.strip()))
-        return out.strip()
+        print('Found {t} install in "{p}"'.format(t=tool, p=out))
+        return out
     else:
         print(tool + ' is not installed (or is not in the PATH). Exiting')
         sys.exit(1)
@@ -147,7 +148,7 @@ def mkdirs_p(dirs):
 
 def main():
     model = {}
-    tools = ['avr-gcc', 'avr-objcopy', 'avr-objdump', 'avr-size', 'avr-nm', 'avrdude']
+    tools = ['avr-gcc', 'avr-g++', 'avr-objcopy', 'avr-objdump', 'avr-size', 'avr-nm', 'avrdude']
     for tool in tools:
         model[tool + '_loc'] = ensure_installed(tool)
 
