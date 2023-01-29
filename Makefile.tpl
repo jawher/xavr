@@ -362,7 +362,7 @@ $(DEPSDIR)/%.d: %.c | $(DEPSDIR)
 	$(CC) $(ALL_ASFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.c,$(OBJDIR)/%.o,$<) -MF $@ $<
 
 # Default target.
-all: begin gccversion sizebefore build program sizeafter end
+all: begin gccversion sizebefore build sizeafter program end
 
 build: $(OBJDIR) elf hex eep lss sym
 
