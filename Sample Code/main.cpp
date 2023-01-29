@@ -29,9 +29,9 @@ class Blink
   void blink( void )
   {
     PORTD = 0b10000000;
-    _delay_ms( 125 );
+    _delay_ms( 500 );
     PORTD = 0b00000000;
-    _delay_ms( 512ls );
+    _delay_ms( 500 );
   }
 };
 

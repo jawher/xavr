@@ -126,10 +126,11 @@ def isystem():
 def ensure_installed(tool):
     proc = subprocess.Popen('which ' + tool, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, err = proc.communicate()
+    out = out.decode('utf-8').strip()
     exitcode = proc.returncode
     if exitcode == 0:
-        print('Found {t} install in "{p}"'.format(t=tool, p=out.strip()))
-        return out.strip()
+        print('Found {t} install in "{p}"'.format(t=tool, p=out))
+        return out
     else:
         print(tool + ' is not installed (or is not in the PATH). Exiting')
         sys.exit(1)
