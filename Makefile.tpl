@@ -66,20 +66,30 @@ TARGET = main
 
 # List C source files here. (C dependencies are automatically generated.)
 
-SRC = $(wildcard *.c)
+CSRC = $(wildcard *.c)  $(wildcard **/*.c)
 
-CPPSRC = $(wildcard *.cpp)
+# List CPP source files here. (ALL_CPPFLAGS dependencies are automatically generated.)
 
-OBJDIR = Builds
+CPPSRC = $(wildcard *.cpp)  $(wildcard **/*.cpp)
+
+SRC =  $(CSRC) $(CPPSRC)
+
 # List Assembler source files here.
+
 #     Make them always end in a capital .S.  Files ending in a lowercase .s
 #     will not be considered source files but generated files (assembler
 #     output from the compiler), and will be deleted upon "make clean"!
 #     Even though the DOS/Win* filesystem matches both .s and .S the same,
 #     it will preserve the spelling of the filenames, and gcc itself does
 #     care about how the name is spelled on its command-line.
-ASRC = $(wildcard *.S)
 
+ASRC = $(wildcard *.S)  $(wildcard **/*.S)
+
+ALLSRC = $(SRC) $(ASRC)
+
+OBJDIR = Builds
+
+OBJDIRS := $(addprefix $(OBJDIR)/, $(shell echo $(dir $(ALLSRC)) | tr " " "\n" | sort| uniq | tr "\n" " "))
 
 # Optimization level, can be [0, 1, 2, 3, s]. 
 #     0 = turn off optimization. s = optimize for size.
@@ -319,10 +329,10 @@ MSG_CLEANING = Cleaning project:
 
 
 # Define all object files.
-OBJ = $(addprefix $(OBJDIR)/,$(SRC:.c=.o)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
+OBJ = $(addprefix $(OBJDIR)/,$(CSRC:.c=.o)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
 
 # Define all listing files.
-LST = $(addprefix $(OBJDIR)/,$(SRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
+LST = $(addprefix $(OBJDIR)/,$(CSRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
 
 
 # Compiler flags to generate dependency files.
@@ -337,21 +347,22 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Generate dependency files
-DEPSDIR   = $(OBJDIR)/.dep
-DEPS      = $(SRC:%.c=$(DEPSDIR)/%.d) $(CPPSRC:%.cpp=$(DEPSDIR)/%.d)
+DEPSDIR   = $(addsuffix /.dep, $(OBJDIR))
+DEPSDIRS  = $(addsuffix .dep/, $(dir $(OBJDIRS)))
+DEPS      = $(addprefix $(OBJDIR)/, $(join $(addsuffix .dep/,$(dir $(SRC))), $(addsuffix .d, $(basename $(notdir $(SRC))))))
 
 -include $(DEPS)
 
 $(DEPSDIR):
-	mkdir -p $(DEPSDIR)
+	mkdir -p $(DEPSDIRS)
 
 .DELETE_ON_ERROR:
+
 $(DEPSDIR)/%.d: %.c | $(DEPSDIR)
 	$(CC) $(ALL_ASFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.c,$(OBJDIR)/%.o,$<) -MF $@ $<
 
-
 # Default target.
-all: begin gccversion sizebefore clean build program sizeafter end
+all: begin gccversion sizebefore build program sizeafter end
 
 build: $(OBJDIR) elf hex eep lss sym
 
@@ -362,7 +373,7 @@ lss: $(OBJDIR)/$(TARGET).lss
 sym: $(OBJDIR)/$(TARGET).sym
 
 $(OBJDIR):
-	@mkdir -p $@
+	@mkdir -p $(OBJDIRS)
 
 # Eye candy.
 # AVR Studio 3.x does not check make's exit code but relies on
@@ -537,9 +548,9 @@ clean_list :
 	$(REMOVE) $(OBJDIR)/$(TARGET).lss
 	$(REMOVE) $(OBJ)
 	$(REMOVE) $(LST)
-ifneq ($(strip $(SRC)),)
-	$(REMOVE) $(OBJDIR)/$(SRC:.c=.s)
-	$(REMOVE) $(OBJDIR)/$(SRC:.c=.d)
+ifneq ($(strip $(CSRC)),)
+	$(REMOVE) $(OBJDIR)/$(CSRC:.c=.s)
+	$(REMOVE) $(OBJDIR)/$(CSRC:.c=.d)
 endif
 ifneq ($(strip $(CPPSRC)),)
 	$(REMOVE) $(OBJDIR)/$(CPPSRC:.cpp=.s)
