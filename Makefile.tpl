@@ -326,18 +326,20 @@ MSG_ASSEMBLING = Assembling:
 MSG_CLEANING = Cleaning project:
 
 
-
-
 # Define all object files.
-OBJ = $(addprefix $(OBJDIR)/,$(CSRC:.c=.o)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
+OBJS = $(addprefix $(OBJDIR)/,$(CSRC:.c=.o)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.o)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.o))
 
 # Define all listing files.
-LST = $(addprefix $(OBJDIR)/,$(CSRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
-
+LSTS = $(addprefix $(OBJDIR)/,$(CSRC:.c=.lst)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.lst)) $(addprefix $(OBJDIR)/,$(ASRC:.S=.lst))
+	
+# Define all dependancy files.
+DEPS = $(addprefix $(OBJDIR)/,$(CSRC:.c=.p)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.p))
+	
+# Define all assembly output files.
+ASMS = $(addprefix $(OBJDIR)/,$(CSRC:.c=.s)) $(addprefix $(OBJDIR)/,$(CPPSRC:.cpp=.s))
 
 # Compiler flags to generate dependency files.
 GENDEPFLAGS = -M
-
 
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
@@ -346,20 +348,8 @@ ALL_CPPFLAGS = -mmcu=$(MCU) -I. $(CPPFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
-# Generate dependency files
-DEPSDIR   = $(addsuffix /.dep, $(OBJDIR))
-DEPSDIRS  = $(addsuffix .dep/, $(dir $(OBJDIRS)))
-DEPS      = $(addprefix $(OBJDIR)/, $(join $(addsuffix .dep/,$(dir $(SRC))), $(addsuffix .d, $(basename $(notdir $(SRC))))))
-
--include $(DEPS)
-
-$(DEPSDIR):
-	mkdir -p $(DEPSDIRS)
 
 .DELETE_ON_ERROR:
-
-$(DEPSDIR)/%.d: %.c | $(DEPSDIR)
-	$(CC) $(ALL_ASFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.c,$(OBJDIR)/%.o,$<) -MF $@ $<
 
 # Default target.
 all: begin gccversion sizebefore build sizeafter program end
@@ -489,8 +479,8 @@ $(OBJDIR)/%.sym: $(OBJDIR)/%.elf
 
 # Link: create ELF output file from object files.
 .SECONDARY : $(OBJDIR)/$(TARGET).elf
-.PRECIOUS : $(OBJ)
-$(OBJDIR)/%.elf: $(OBJ)
+.PRECIOUS : $(OBJS)
+$(OBJDIR)/%.elf: $(OBJS)
 	@echo
 	@echo $(MSG_LINKING) $@
 	$(CC) $(ALL_CFLAGS) $^ --output $@ $(LDFLAGS)
@@ -500,13 +490,15 @@ $(OBJDIR)/%.elf: $(OBJ)
 $(OBJDIR)/%.o : %.c
 	@echo
 	@echo $(MSG_COMPILING) $<
-	$(CC) -c $(ALL_CFLAGS) "$(abspath $<)" -o $@ 
+	$(CC) -c $(ALL_CFLAGS) "$(abspath $<)" -o $@
+	@$(CC) $(ALL_CFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.c,$(OBJDIR)/%.o,$<) -MF $(@:.o=.p) $<
 
 # Compile: create object files from C++ source files.
 $(OBJDIR)/%.o : %.cpp
 	@echo
 	@echo $(MSG_COMPILING) $<
 	$(CCPP) -c $(ALL_CPPFLAGS) "$(abspath $<)" -o $@
+	@$(CCPP) $(ALL_CPPFLAGS) $(GENDEPFLAGS) -MT $(patsubst %.cpp,$(OBJDIR)/%.o,$<) -MF $(@:.o=.p) $<
 
 
 # Compile: create assembler files from C source files.
@@ -546,19 +538,14 @@ clean_list :
 	$(REMOVE) $(OBJDIR)/$(TARGET).map
 	$(REMOVE) $(OBJDIR)/$(TARGET).sym
 	$(REMOVE) $(OBJDIR)/$(TARGET).lss
-	$(REMOVE) $(OBJ)
-	$(REMOVE) $(LST)
-ifneq ($(strip $(CSRC)),)
-	$(REMOVE) $(OBJDIR)/$(CSRC:.c=.s)
-	$(REMOVE) $(OBJDIR)/$(CSRC:.c=.d)
-endif
-ifneq ($(strip $(CPPSRC)),)
-	$(REMOVE) $(OBJDIR)/$(CPPSRC:.cpp=.s)
-	$(REMOVE) $(OBJDIR)/$(CPPSRC:.cpp=.d)
-endif
+	$(REMOVE) $(OBJS)
+	$(REMOVE) $(LSTS)
+	$(REMOVE) $(ASMS)
+	$(REMOVE) $(DEPS)
 
-	$(REMOVE) $(OBJDIR)/.dep/*
+# Include dependeancies
 
+-include $(widcard OBJDIR/*.d) $(widcard OBJDIR/**/*.d)
 
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
